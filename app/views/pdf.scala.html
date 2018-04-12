@@ -1,0 +1,52 @@
+@(studentMarks: Map[Teacher, List[Mark]], student: Student)
+<html lang="pl-PL">
+
+    <head>
+        <meta charset="UTF-8">
+        <style>
+                th, td {
+                    padding: 15px;
+                    border: 1px solid black;
+                    text-align: center;
+                }
+        </style>
+    </head>
+    <body>
+        <h1>Certyfikat</h1>
+        <table>
+            <tr>
+                <td>Imie studenta</td><td>@student.user.firstname</td>
+            </tr>
+            <tr>
+                <td>Nazwisko studenta</td><td>@student.user.lastname</td>
+            </tr>
+            <tr>
+                <td>Klasa studenta</td><td>@student.clazz.name</td>
+            </tr>
+        </table>
+        @if(!studentMarks.isEmpty()) {
+            <table>
+                <tr>
+                    <th>Przedmiot</th>
+                    <th>Imie i nazwisko nauczyciela</th>
+                    <th>Oceny</th>
+                </tr>
+                @for((key, value) <- studentMarks) {
+                    <tr>
+                        <td>@key.subject.name</td>
+                        @if(key.user != null) {
+                            <td>@key.user.firstname @key.user.lastname</td>
+                        } else {
+                            <td>Teacher not allocated</td>
+                        }
+                        <td>@for(mark <- value) {
+                            @mark.value
+                        }</td>
+                    </tr>
+                }
+            </table>
+        } else {
+            <p>Brak ocen</p>
+        }
+    </body>
+</html>

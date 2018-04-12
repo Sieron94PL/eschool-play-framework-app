@@ -1,0 +1,82 @@
+@(clazzes: List[Clazz], clazzForm: Form[Clazz], clazz: Clazz, availableSubjects: List[Subject], clazzSubjects: List[Subject])
+@import helper._
+@main("Classes") {
+    <h1>Classes</h1>
+    @form(CSRF(routes.AdminController.addClazz())) {
+        <form action="@routes.AdminController.addClazz()" method="post">
+            <table>
+                <tr>
+                    <td>Clazz name</td>
+                    <td><input type="text" name="name" required></td>
+                    <td><input type="image" class="image" src="@routes.Assets.versioned("images/plus-icon-21.png")"/></td>
+                </tr>
+            </table>
+        </form>
+    }
+
+    @if(clazz != null) {
+        <div class="descClass">@clazz.name</div>
+        <br />
+        <br />
+    }
+
+    @if(availableSubjects != null) {
+        @if(!availableSubjects.isEmpty()) {
+            <div class="classesList">
+                Available subjects
+            </div>
+            <table>
+                @for(subject <- availableSubjects) {
+                    <tr>
+                        <td>@subject.name</td>
+                        <td><a href="addSubjectToClazz/@subject.id/@clazz.id"><img
+                        src="@routes.Assets.versioned("images/plus-icon-21.png")" height="25"
+                        width="25">
+                        </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    }
+    @if(clazzSubjects != null) {
+        @if(!clazzSubjects.isEmpty()) {
+
+            <div class="classesList">
+                Class subjects
+            </div>
+            <table>
+                @for(subject <- clazzSubjects) {
+                    <tr>
+                        <td>@subject.name</td>
+                        <td><a href="removeSubjectFromClazz/@subject.id/@clazz.id"><img
+                        src="@routes.Assets.versioned("images/minus-icon.png")" height="25"
+                        width="25">
+                        </a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    }
+    @if(!clazzes.isEmpty()) {
+        <table class="eschoolTable">
+            <tr>
+                <th>Id</th>
+                <th>Clazz name</th>
+                <th>Edit</th>
+            </tr>
+            @for(clazz <- clazzes) {
+                <tr>
+                    <td>@clazz.id</td>
+                    <td>@clazz.name</td>
+                    <td><a href="clazzes?id=@clazz.id"><img
+                    src="@routes.Assets.versioned("images/tool-icon-20.png")" height="25"
+                    width="25">
+                    </a>
+                    </td>
+                </tr>
+            }
+        </table>
+    }
+}

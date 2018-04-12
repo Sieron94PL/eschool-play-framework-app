@@ -1,0 +1,37 @@
+@(studentMarks: Map[Teacher, List[Mark]], student: Student)
+@main("Student") {
+    <h1>Student management</h1>
+    @if(!studentMarks.isEmpty()) {
+        <table class="eschoolTable">
+            <tr>
+                <th>Subject name</th>
+                <th>Teacher firstname and lastname</th>
+                <th>Marks</th>
+            </tr>
+            @for((key, value) <- studentMarks) {
+                <tr>
+                    <td>@key.subject.name</td>
+                    @if(key.user != null) {
+                        <td>@key.user.firstname @key.user.lastname</td>
+                    } else {
+                        <td>Teacher not allocated</td>
+                    }
+                    <td>@for(mark <- value) {
+                        @mark.value
+                    }</td>
+                </tr>
+            }
+        </table>
+    } else {
+        <p>You don't have marks!</p>
+    }
+    <table>
+        <tr>
+            <td><a href="/generatePdf"><button class="button">
+                Download certificate
+            </button></a></td>
+        </tr>
+    </table>
+
+
+}

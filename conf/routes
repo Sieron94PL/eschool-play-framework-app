@@ -1,0 +1,58 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# An example controller showing a sample home page
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                                                controllers.Assets.versioned(path="/public", file: Asset)
+
+GET         /                                                            controllers.HomeController.index
+
+GET         /registration                                                controllers.UserController.registration
+
+POST        /signIn                                                      controllers.UserController.signIn
+
+GET         /login                                                       controllers.UserController.login
+
+GET         /logout                                                      controllers.UserController.logout
+
+POST        /submitUser                                                  controllers.UserController.submitUser
+
+GET         /getProfile                                                  controllers.UserController.getProfile
+
+GET         /subjects                                                    controllers.AdminController.subjects
+
+POST        /addSubject                                                  controllers.AdminController.addSubject
+
+GET         /clazzes                                                     controllers.AdminController.clazzes
+
+POST        /addClazz                                                    controllers.AdminController.addClazz
+
+GET         /securityRoles                                               controllers.AdminController.securityRoles
+
+POST        /addSecurityRole                                             controllers.AdminController.addSecurityRole
+
+GET         /users                                                       controllers.AdminController.users
+
+POST        /editUser                                                    controllers.AdminController.editUser
+
+GET         /deleteUser/:userId                                          controllers.AdminController.deleteUser(userId: Long)
+
+GET         /removeSubjectFromClazz/:subjectId/:clazzId                  controllers.AdminController.removeSubjectFromClazz(subjectId: Long, clazzId: Long)
+
+GET         /addSubjectToClazz/:subjectId/:clazzId                       controllers.AdminController.addSubjectToClazz(subjectId: Long, clazzId: Long)
+
+GET         /getStudentsByClazzId/:clazzId                               controllers.EschoolRestController.getStudentsByClazzId(clazzId: Long)
+
+GET         /getStudentsByClazzIdAndSubjectId/:clazzId/:subjectId        controllers.EschoolRestController.getStudentsByClazzIdAndSubjectId(clazzId: Long, subjectId: Long)
+
+GET         /getClazzes/:subjectId                                       controllers.EschoolRestController.getClazzesWithoutTeacher(subjectId: Long)
+
+GET         /marks                                                       controllers.TeacherController.marks
+
+POST        /addMark                                                     controllers.TeacherController.addMark
+
+GET         /studentMarks                                                controllers.StudentController.getStudentMarks
+
+GET         /generatePdf                                                 controllers.StudentController.generatePdf

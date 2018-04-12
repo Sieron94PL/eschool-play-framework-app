@@ -1,0 +1,142 @@
+@(markForm: Form[Mark], students: List[Student], teacher: Teacher, teacherClazzes: List[Clazz], subject: Subject, map: Map[Student, List[Mark]])
+@import helper._
+@main("Teacher") {
+    <h1>Add marks</h1>
+    <script>
+
+            $(document).ready(function () {
+                var btn = document.getElementById("btn");
+                if ($('#students').val()) {
+                    btn.disabled = false;
+                }
+            });
+
+            $(document).ready(function () {
+                $('#classes').on('change', function () {
+                    var clazzId = document.getElementById("classes").value;
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:9000/getStudentsByClazzId/' + clazzId,
+                        dataType: 'json',
+                        success: function (data) {
+                            var students = document.getElementById("students");
+                            var html = '';
+                            for (var i = 0; i < data.length; i++) {
+                                html += '<option value=' + data[i].id + '>' + data[i].user.firstname + ' ' + data[i].user.lastname + '</option>';
+                            }
+                            students.innerHTML = html;
+                            var students = document.getElementById("students").options.length;
+                            var btn = document.getElementById("btn");
+                            if (students == 0) {
+                                btn.disabled = true;
+                            } else {
+                                btn.disabled = false;
+                            }
+                        }
+                    });
+                });
+
+            });
+
+            $(document).ready(function () {
+                $('#classes').on('change', function () {
+                    var subjectId = document.getElementById("subject_id").value;
+                    var clazzId = document.getElementById("classes").value;
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:9000/getStudentsByClazzIdAndSubjectId/' + clazzId + '/' + subjectId,
+                        dataType: 'json',
+                        success: function (data) {
+                            var marks = document.getElementById('marks');
+                            var dataLength = Object.keys(data).length;
+                            if (dataLength != 0) {
+                                html = '<table class="eschoolTable">';
+                                html += '<tr>';
+                                html += '<th>Student firstname and lastname</th>';
+                                html += '<th>Marks</th>';
+                                html += '</tr>';
+                                $.each(data, function (key, value) {
+                                    html += '<tr>';
+                                    html += '<td>';
+                                    html += key
+                                            + '</td>';
+                                    html += '<td style="font-style:italic;">'
+                                    for (var i = 0; i < value.length; i++) {
+                                        html += value[i].value
+                                                + '  ';
+                                    }
+                                    html += '</td></tr>'
+                                });
+                                html += '</table>';
+                                console.log(html);
+                                marks.innerHTML = html;
+                            } else {
+                                marks.innerHTML = '';
+                            }
+                        }
+                    });
+                });
+
+            });
+    </script>
+
+    @form(CSRF(routes.TeacherController.addMark())) {
+        <form action="@routes.TeacherController.addMark" method="post">
+            <table>
+                <tr>
+                    <td>
+                        <input type="hidden" id="subject_id" name="subject.id" value="@subject.id">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="classes">Classes</label></td>
+                    <td><select class="select-style" id="classes" name="clazzes">
+                    @for(clazz <- teacherClazzes) {
+                        <option value="@clazz.id">@clazz.name</option>
+                    }
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><label for="students">Students</label></td>
+                    <td><select class="select-style" id="students" name="students">
+                    @for(student <- students) {
+                        <option value="@student.id">@student.user.firstname @student.user.lastname</option>
+                    }
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><label for="mark">Mark</label></td>
+                    <td><select class="select-style" name="value">
+                        <option>2</option>
+                        <option>2.5</option>
+                        <option>3</option>
+                        <option>3.5</option>
+                        <option>4</option>
+                        <option>4.5</option>
+                        <option>5</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><input id="btn"  class="button" type="submit" disabled value="Add mark"/></td>
+                </tr>
+            </table>
+        </form>
+    }
+    <div id="marks">
+        <table class="eschoolTable">
+            <tr>
+                <th>Student firstname and lastname</th>
+                <th>Marks</th>
+            </tr>
+            @for((key, value) <- map) {
+                <tr>
+                    <td>@key.user.firstname @key.user.lastname</td>
+                    <td style="font-style: italic;">@for(mark <- value) {
+                        @mark.value
+                    }</td>
+
+                </tr>
+            }
+        </table>
+    </div>
+}

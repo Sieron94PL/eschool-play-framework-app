@@ -1,0 +1,30 @@
+@(securityRoles: List[SecurityRole], securityRoleForm: Form[SecurityRole])
+    @import helper._
+    @main("Security roles") {
+        <h1>Security roles</h1>
+        @form(CSRF(routes.AdminController.addSecurityRole())) {
+            <form action="@routes.AdminController.addSecurityRole()" method="post">
+                <table>
+                    <tr>
+                        <td>Security role name</td>
+                        <td><input type="text" name="name" required></td>
+                        <td><input type="image" class="image"
+                        src="@routes.Assets.versioned("images/plus-icon-21.png")"/></td>
+                </table>
+            </form>
+        }
+        @if(!securityRoles.isEmpty()) {
+            <table class="eschoolTable">
+                <tr>
+                    <th>Id</th>
+                    <th>Security role name</th>
+                </tr>
+                @for(securityRole <- securityRoles) {
+                    <tr>
+                        <td>@securityRole.id</td>
+                        <td>@securityRole.name</td>
+                    </tr>
+                }
+            </table>
+        }
+    }

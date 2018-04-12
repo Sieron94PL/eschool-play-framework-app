@@ -1,0 +1,54 @@
+@(user: User)
+@main("Profile") {
+    <h1>Profile</h1>
+    <table>
+        <tr>
+            <td>Firstname</td>
+            <td><strong>@user.firstname</strong></td>
+        </tr>
+        <tr>
+            <td>Lastname</td>
+            <td><strong>@user.lastname</strong></td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td><strong>@user.email</strong></td>
+        </tr>
+        @if(user.roles != null) {
+            @if(user.roles.get(0).getName() == "ROLE_STUDENT") {
+                @if(user.student.clazz != null) {
+                    <tr>
+                        <td>Class name</td>
+                        <td><strong>@user.student.clazz.name</strong></td>
+                    </tr>
+                } else {
+                    <tr><td><strong>No class allocated</strong></td></tr>
+
+                }
+            }
+            @if(user.roles.get(0).getName() == "ROLE_TEACHER") {
+                @if(user.teacher.subject != null) {
+                    <tr>
+                        <td>Teacher subject</td>
+                        <td><strong>@user.teacher.subject.name</strong></td>
+                <tr></tr>
+                } else {
+                    <tr><td><strong>No subject allocated</strong></td></tr>
+
+                }
+                @if(!user.teacher.clazzes.isEmpty()) {
+                    <tr>
+                        <td>Teacher classes</td>
+                        <td>
+                        @for(clazz <- user.teacher.clazzes) {
+                            <strong>@clazz.name</strong>
+                        }
+                        </td>
+                    </tr>
+                } else {
+                    <tr><td><strong>No class allocated</strong></td></tr>
+                }
+            }
+        }
+    </table>
+}

@@ -1,0 +1,247 @@
+@(user: User, userForm: Form[User], users: List[User], clazzes: List[Clazz], subjects: List[Subject], teacherClazzes: Form[MultipleSelectForm], clazzesWithoutTeacher: List[Clazz], currentTeacherClazzes: List[Clazz])
+@import helper._
+@main("Users") {
+    <h1>Users</h1>
+    @if(user != null) {
+        @form(CSRF(routes.AdminController.editUser())) {
+            <form name="editForm" action="@routes.AdminController.editUser" method="post">
+                <table>
+                    <input type="hidden" name="id" value="@user.id">
+                    <input type="hidden" name="password" value="@user.password">
+                    <tr>
+                        <td>User firstname</td>
+                        <td><input type="text" id="firstname" name="firstname" value="@user.firstname" required min="6" max="20"></td>
+                    </tr>
+                    <tr>
+                        <td>User lastname</td>
+                        <td><input type="text" name="lastname" value="@user.lastname" required min="6" max="20"></td>
+                    </tr>
+                    <tr>
+                        <td>User email</td>
+                        <td><input type="email" name="email" value="@user.email" required min="6" max="20"></td>
+                    </tr>
+                    <tr>
+                        <td>Enabled</td>
+                            <!--<td><input type="text" name="enabled" value="@user.enabled"/></td> !-->
+                        <!--Checkbox nie działa dla edycji.!-->
+                        <!--@if(user.enabled == true) {
+                        <td><input type="checkbox" name="enabled" checked></td>
+                    } else {
+                        <td><input type="checkbox" name="enabled"></td>
+
+                    }!-->
+                        <td><select style="select-style" name="enabled">
+                        @if(user.enabled == true) {
+                            <option value="true" selected>true</option>
+                            <option value="false">false</option>
+                        } else {
+                            <option value="false" selected>false</option>
+                            <option value="true">true</option>
+                        }
+                        </select></td>
+                    </tr>
+                    <tr>
+                    @{
+                        if(user.roles.isEmpty()) {
+                                <td>
+                                    <input type="radio" name="securityRoles" value="student_id"/>
+                                Student
+                                </td>
+                                <td>
+                                    <input type="radio" name="securityRoles" value="teacher_id"/>
+                                Teacher
+                                <td>
+                                    <input type="radio" name="securityRoles" value="admin"/>
+                                Admin
+                                </td>
+                                </td>
+                        }
+                    }
+                    </tr>
+                    @if(!user.roles.isEmpty()) {
+                        @if(user.roles.get(0).getName() == "ROLE_ADMIN") {
+                            <tr>
+                                <td>Role</td>
+                                <td>Admin</td>
+                            </tr>
+                        }
+                    }
+                    @if(user.student != null) {
+                        <tr>
+                            <td>Role</td>
+                            <td>Student</td>
+                        </tr>
+
+                        @if(user.student.clazz != null) {
+                            <tr>
+                                <td>Clazz name</td>
+                                <td>@user.student.clazz.name</td>
+                            </tr>
+                        } else {
+                            <tr>
+                                <td><label for="studentClazz">Student class</label></td>
+                                <td><select class="select-style" name="studentClazz">
+                                    <option value="0">--select class--</option>
+                                    @for(clazz <- clazzes) {
+                                        <option value="@clazz.id">@clazz.name</option>
+                                    }</select></td>
+                            </tr>
+                        }
+                    }
+                    @if(user.teacher != null) {
+                        <tr>
+                            <td>Role</td>
+                            <td>Teacher</td>
+                        </tr>
+                        @if(user.teacher.subject != null) {
+                            <tr>
+                                <td>Teacher subject</td>
+                                <td>@user.teacher.subject.name</td>
+                            </tr>
+                            <tr>
+                                <td>Teacher classes</td>
+                                <td><select multiple name="teacherClazzes[]">
+                                    @for(clazz <- currentTeacherClazzes) {
+                                        <option selected value="@clazz.id">@clazz.name</option>
+                                    }
+                                    @if(clazzesWithoutTeacher != null) {
+                                        @for(clazz <- clazzesWithoutTeacher) {
+                                            <option value="@clazz.id">@clazz.name</option>
+                                        }
+                                    }
+                                </select></td>
+                            </tr>
+
+                        } else {
+                            <tr>
+                                <td><label for="teacherSubject">Teacher subject</label></td>
+                                <td><select class="select-style" id="teacherSubject" name="teacherSubject">
+                                    <option value="0">--select subject--</option>
+                                    @for(subject <- subjects) {
+                                        <option value="@subject.id">@subject.name</option>
+                                    }
+                                </select></td>
+                            </tr>
+                        }
+                    }
+                    <tr id="role"></tr>
+                    <tr id="classes" ></tr>
+                    <tr>
+                        <td><button class="button" type="submit">Edytuj użytkownika</button></td>
+                    </tr>
+                </table>
+            </form>
+        }
+    }
+    <script>
+            $(document).ready(function () {
+                $("input[name='securityRoles']").on("click", function () {
+                    var html = '';
+                    var role = document.getElementById('role');
+                    var classes = document.getElementById("classes");
+                    classes.innerHTML = '';
+                    var selectedRole = $(this).val();
+                    if (selectedRole == "student_id") {
+                        html += '<td><label for="studentClazz">Student class</label></td>';
+                        html += '<td><select name="studentClazz">';
+                        html += '<option value="0">--select class--</option>';
+                        html += '@for(clazz <- clazzes){<option value="@clazz.id">@clazz.name</option>}';
+                        html += '</select></td>';
+                        role.innerHTML = html;
+                    } else if (selectedRole == 'teacher_id') {
+                        html = '';
+                        html += '<td><label for="teacherSubject">Subjects</label></td>';
+                        html += '<td><select id="teacherSubject" name="teacherSubject">';
+                        html += '<option value=0>--select subject--</option>';
+                        html += '@for(subject <- subjects){<option value="@subject.id">@subject.name</option>}';
+                        html += '</select></td>';
+                        role.innerHTML = html;
+                    }
+                    else {
+                        role.innerHTML = '';
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $('#role').on('change', function () {
+                    var id = document.getElementById("teacherSubject").value;
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:9000/getClazzes/' + id,
+                        dataType: 'json',
+                        success: function (data) {
+                            var classes = document.getElementById("classes");
+                            var html = '';
+                            html += '<td><label for="teacherClazzes[]">Teacher clazzes</label></td>';
+                            html += '<td><select name="teacherClazzes[]" multiple>';
+                            for (var i = 0; i < data.length; i++) {
+                                html += '<option value=' + data[i].id + '>' + data[i].name + '</option>';
+                            }
+                            html += '</select></td>';
+                            classes.innerHTML = html;
+                        }
+                    });
+                });
+
+            });
+
+            $(document).ready(function () {
+                $("select[name='teacherSubject'").on('change', function () {
+                    var id = document.getElementById("teacherSubject").value;
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:9000/getClazzes/' + id,
+                        dataType: 'json',
+                        success: function (data) {
+                            var classes = document.getElementById("classes");
+                            var html = '';
+                            html += '<td><label for="teacherClazzes[]">Teacher clazzes</label></td>';
+                            html += '<td><select name="teacherClazzes[]" multiple>';
+                            for (var i = 0; i < data.length; i++) {
+                                html += '<option value=' + data[i].id + '>' + data[i].name + '</option>';
+                            }
+                            html += '</select></td>';
+                            classes.innerHTML = html;
+                        }
+                    });
+                });
+
+            });
+
+
+    </script>
+    @if(!users.isEmpty()) {
+        <table class="eschoolTable">
+            <tr>
+                <th>Id</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+                <th>Enabled</th>
+                <th>Edit</th>
+                    <!-- <th>Delete</th> !-->
+            </tr>
+            @for(user <- users) {
+                <tr>
+                    <td>@user.id</td>
+                    <td>@user.firstname</td>
+                    <td>@user.lastname</td>
+                    <td>@user.email</td>
+                    <td>@user.enabled</td>
+                    <td><a href="users?id=@user.id"><img
+                    src="@routes.Assets.versioned("images/tool-icon-20.png")" height="25"
+                    width="25">
+                    </a>
+                    </td>
+                        <!--<td><a href="deleteUser/      @user.id">
+                    <img
+                    src="@routes.Assets.versioned("images/delete1600.png")" height="25"
+                    width="25">
+                    </a>
+                    </td> !-->
+                </tr>
+            }
+        </table>
+    }
+}

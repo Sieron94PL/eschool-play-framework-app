@@ -1,0 +1,31 @@
+@(subjects: List[Subject], subjectForm: Form[Subject])
+    @import helper._
+    @main("Subjects") {
+        <h1>Subjects</h1>
+        @form(CSRF(routes.AdminController.addSubject())) {
+            <form action="@routes.AdminController.addSubject()" method="post">
+                <table>
+                    <tr>
+                        <td>Subject name</td>
+                        <td><input type="text" name="name" required></td>
+                        <td><input type="image" class="image"
+                        src="@routes.Assets.versioned("images/plus-icon-21.png")"/></td>
+                    </tr>
+                </table>
+            </form>
+        }
+        @if(!subjects.isEmpty()) {
+            <table class="eschoolTable">
+                <tr>
+                    <th>Id</th>
+                    <th>Subject name</th>
+                </tr>
+                @for(subject <- subjects) {
+                    <tr>
+                        <td>@subject.id</td>
+                        <td>@subject.name</td>
+                    </tr>
+                }
+            </table>
+        }
+    }

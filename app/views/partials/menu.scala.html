@@ -1,0 +1,43 @@
+@import be.objectify.deadbolt.java.views.html.subjectNotPresent
+@import be.objectify.deadbolt.java.views.html.restrict
+@import be.objectify.deadbolt.java.utils.TemplateUtils.{allOf, anyOf, allOfGroup}
+
+@restrict(roles = allOfGroup("ROLE_STUDENT")) {
+    <nav>
+        <ul>
+            <li><a href="/studentMarks">Student marks</a></li>
+            <li><a href="/getProfile">Profile</a></li>
+        </ul>
+    </nav>
+}
+
+@restrict(roles = allOfGroup("ROLE_ADMIN")) {
+    <nav>
+        <ul>
+            <li><a href="/clazzes">Classes</a></li>
+            <li><a href="/subjects">Subjects</a></li>
+            <li><a href="/securityRoles">Security roles</a></li>
+            <li><a href="/users">Users</a></li>
+
+        </ul>
+    </nav>
+}
+
+@restrict(roles = allOfGroup("ROLE_TEACHER")) {
+    <nav>
+        <ul>
+            <li><a href="/marks">Add marks</a></li>
+            <li><a href="/getProfile">Profile</a></li>
+        </ul>
+    </nav>
+}
+
+
+@subjectNotPresent() {
+    <nav>
+        <ul>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/registration">Registration</a></li>
+        </ul>
+    </nav>
+}

@@ -1,0 +1,6 @@
+registration.title = Registration
+registration.firstname = User name
+registration.lastname = User lastname
+registration.email = User email
+registration.password = Password user
+registration.action = Register

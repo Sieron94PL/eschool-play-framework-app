@@ -1,0 +1,53 @@
+@(message: play.i18n.Messages, userForm: Form[models.User], recaptcha: Form[Recaptcha], captchaError: String, error: String)
+@import helper._
+@main(message.at("registration.title")) {
+    <h1>@message.at("registration.title")</h1>
+    <div style="position: absolute;
+        right: 5px;">
+        <a href="?lang=pl"><img src="@routes.Assets.versioned("images/Poland-icon.png")" width="25px" height="25px"></a>
+        <a href="?lang=en"><img src="@routes.Assets.versioned("images/gb.png")" width="25px" height="25px"></a>
+    </div>
+    @form(CSRF(routes.UserController.submitUser())) {
+        <form action="@routes.UserController.submitUser()" method="post">
+            <table>
+                <tr>
+                    <td>@message.at("registration.firstname")</td>
+                    <td><input type="text" name="firstname" value="@userForm("firstname").value()" required min="6" max="20"></td>
+                </tr>
+                <tr>
+                    <td>@message.at("registration.lastname")</td>
+                    <td><input type="text" name="lastname" value="@userForm("lastname").value()" required min="6" max="20"></td>
+                </tr>
+                <tr>
+                    <td>@message.at("registration.email")</td>
+                    <td><input type="email" name="email" value="@userForm("email").value()" required min="6" max="20"></td>
+                    @if(error != null) {
+                        <td class="error">@error</td>
+                    }
+                </tr>
+                <tr>
+                    <td>@message.at("registration.password")</td>
+                    <td><input type="password" name="password" required min="6" max="20"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div class="g-recaptcha" data-sitekey="6LdpazsUAAAAAEojZeZCE4p5HXIEDhgjK3myvkKT" data-callback="captchaCallback"></div></td>
+                    @if(captchaError != null) {
+                        <td class="error">@captchaError</td>
+                    }
+                    <input type="hidden" name="recaptcha" id="recaptcha"/>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input name="signup"
+                    type="submit" class="button" style="width: 300px;"
+                    value="@message.at("registration.action")" /></td>
+                </tr>
+            </table>
+        </form>
+    }
+    <script>
+            function captchaCallback() {
+                document.getElementById("recaptcha").value = document.getElementById("g-recaptcha-response").value;
+                console.log(document.getElementById("recaptcha").value);
+            }
+    </script>
+}

@@ -1,0 +1,37 @@
+@(userForm: Form[models.User], error: String, msg: String)
+    @import helper._
+    @main("Login") {
+        <h1 align="center">Login</h1>
+        <div id="login-box">
+            @if(error != null) {
+                <div class="error">@error</div>
+            }
+            @if(msg != null) {
+                <div class="msg">@msg</div>
+            }
+            @form(CSRF(routes.UserController.signIn())) {
+                <form action="@routes.UserController.signIn()" method="post">
+                    <table>
+                        <tr>
+                            <td>User email</td>
+                            <td><input type="email" name="email"></td>
+                        </tr>
+                        <tr>
+                            <td>User password</td>
+                            <td><input type="password" name="password"></td>
+                        </tr>
+                        <tr>
+                            <td colspan='1' align="right"><input class="button"
+                            type="submit" value="Sign in" /></td>
+                            <td colspan='2' align="right">
+                                <a type="button" class="button" style="color: #228B22;
+                                    background-color: #98FB98;
+                                    border-color: #00FF00;" href="/registration">Registration</a>
+
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            }
+        </div>
+    }
