@@ -1,6 +1,8 @@
 # Eschool - Play Framework
 
-Similar application to Eschool created in Spring Framework, which aimed to compare two web technologies Spring and Play. 
+Similar application to Eschool created in Spring Framework, which aimed to compare two web technologies Spring and Play.
+
+This is educational application created for both students and teachers.
 
 Students have opportunity to:  
 * logging and registrating to the system (Spring Security - OAuth, reCaptcha)
